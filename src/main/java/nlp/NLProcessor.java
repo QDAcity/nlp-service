@@ -1,16 +1,14 @@
 package nlp;
 
-import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.CoreDocument;
-import edu.stanford.nlp.pipeline.CoreSentence;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 
-import java.util.LinkedList;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
-import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class NLProcessor {
     private final CoreDocument doc;
@@ -28,9 +26,9 @@ public class NLProcessor {
         return this;
     }
 
-    public List<String> recommendations() {
-        props.setProperty("annotators", annotators);
-        props.setProperty("language", language);
+    public List<String> recommendations() throws IOException {
+        InputStream propStream = new FileInputStream("StanfordCoreNLP-german.properties");
+        props.load(propStream);
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
         pipeline.annotate(doc);
         return doc

@@ -8,6 +8,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import java.io.IOException;
 import java.util.List;
 
 @Produces(MediaType.APPLICATION_JSON)
@@ -17,7 +18,7 @@ public class RecommendationApi {
 
     @POST
     @Path("/create")
-    public List<String> getRecommendations(ProcessingRequest request) {
+    public List<String> getRecommendations(ProcessingRequest request) throws IOException {
         return NLProcessor
                 .nounPhrases(request.getText())
                 .recommendations();

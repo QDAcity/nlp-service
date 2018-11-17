@@ -75,7 +75,7 @@
             <groupId>edu.stanford.nlp</groupId>
             <artifactId>stanford-corenlp</artifactId>
             <version>${stanford.version}</version>
-            <classifier>models-english</classifier>
+            <classifier>models-german</classifier>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
