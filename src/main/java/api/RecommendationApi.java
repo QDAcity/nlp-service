@@ -1,7 +1,7 @@
 package api;
 
 import models.ProcessingRequest;
-import nlp.SimpleNLProcessor;
+import nlp.NLProcessor;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -18,7 +18,7 @@ public class RecommendationApi {
     @POST
     @Path("/create")
     public List<String> getRecommendations(ProcessingRequest request) {
-        return SimpleNLProcessor
+        return NLProcessor
                 .nounPhrases(request.getText())
                 .recommendations();
     }

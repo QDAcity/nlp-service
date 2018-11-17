@@ -19,16 +19,16 @@ public class NLProcessorTest {
                     "were enough to convince many Floridians that widespread election theft was underway.";
 
 
-    @Test
-    public void testNounPhrases() {
-        TEXT = "This sentence is short.";
-        SimpleNLProcessor proc = new SimpleNLProcessor(TEXT);
-        List<String> result = proc.getNounPhrases();
-
-        for (String np: result) {
-//            System.out.println(np);
-        }
-    }
+//    @Test
+//    public void testNounPhrases() {
+//        TEXT = "This sentence is short.";
+//        SimpleNLProcessor proc = new SimpleNLProcessor(TEXT);
+//        List<String> result = proc.getNounPhrases();
+//
+//        for (String np: result) {
+////            System.out.println(np);
+//        }
+//    }
 
 
 }
