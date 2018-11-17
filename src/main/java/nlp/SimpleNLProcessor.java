@@ -6,19 +6,22 @@ import edu.stanford.nlp.trees.Tree;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SimpleNLProcessor {
     private final Document doc;
+    private List<Tree> recommendationTrees;
 
-    public SimpleNLProcessor(String text) {
-        this.doc = new Document(text);
+    private SimpleNLProcessor(Document doc) {
+        this.doc = doc;
+        recommendationTrees = getNounPhrases();
     }
 
-    public List<String> getNounPhrases() {
-        List<String> nounPhrases = new LinkedList<>();
+    private List<Tree> getNounPhrases() {
+        List<Tree> nounPhrases = new LinkedList<>();
         for(Sentence sentence: doc.sentences()) {
             Tree tree = sentence.parse();
-            getNounPhraseTree(tree).forEach(t -> nounPhrases.add(t.toString()));
+            nounPhrases.addAll(getNounPhraseTree(tree));
         }
         return nounPhrases;
     }
@@ -40,5 +43,17 @@ public class SimpleNLProcessor {
     }
 
 
+    public List<String> recommendations() {
+        return recommendationTrees
+                .stream()
+                .map(Tree::toString)
+                .collect(Collectors.toList());
+    }
+
+
+
+    public static SimpleNLProcessor nounPhrases(String text) {
+        return new SimpleNLProcessor(new Document(text));
+    }
 
 }

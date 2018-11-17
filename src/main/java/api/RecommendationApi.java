@@ -18,9 +18,9 @@ public class RecommendationApi {
     @POST
     @Path("/create")
     public List<String> getRecommendations(ProcessingRequest request) {
-        return new SimpleNLProcessor(request.getText())
-                .getNounPhrases();
+        return SimpleNLProcessor
+                .nounPhrases(request.getText())
+                .recommendations();
     }
-
 
 }
