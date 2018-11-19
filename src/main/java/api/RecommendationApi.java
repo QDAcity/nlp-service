@@ -31,6 +31,7 @@ public class RecommendationApi {
         return KeywordExtraction
                 .nounPhrases(request.getText())
                 .containingNouns()
+                .filterPOSTags()
                 .shorterThan(4)
                 .recommendations();
     }

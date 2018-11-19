@@ -19,5 +19,9 @@ public interface NLProcessor {
         return this;
     }
 
+    default NLProcessor withSpecifityThreshold() {
+        return this;
+    }
+
     List<String> recommendations();
 }

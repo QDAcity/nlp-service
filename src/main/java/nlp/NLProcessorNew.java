@@ -28,6 +28,12 @@ public class NLProcessorNew implements NLProcessor{
     }
 
     @Override
+    public NLProcessor filterPOSTags() {
+        recommendations.filterPOSTags();
+        return this;
+    }
+
+    @Override
     public NLProcessor shorterThan(int length) {
         recommendations.restrictToSize(length);
         return this;

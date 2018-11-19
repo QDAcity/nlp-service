@@ -7,9 +7,10 @@ import edu.stanford.nlp.trees.Tree;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class Candidate {
-    private final List<CoreLabel> labels = new LinkedList<>();
+    private List<CoreLabel> labels = new LinkedList<>();
     private final Tree tree;
 
     public Candidate(CoreSentence sentence) {
@@ -30,6 +31,21 @@ public class Candidate {
 
     private boolean isNoun (String labelVal) {
         return labelVal.contains("N");
+    }
+
+    public Candidate filterByPOSTag() {
+        labels = labels
+                .stream()
+                .filter(l -> hasValidPosTag(l.value()))
+                .collect(Collectors.toList());
+        return this;
+    }
+
+    private boolean hasValidPosTag(String labelVal) {
+        return (labelVal.contains("NN")
+                || labelVal.contains("VB")
+                || labelVal.equals("ADJA")
+                || labelVal.equals("NE"));
     }
 
     public List<CoreLabel> getLabels() {
@@ -53,8 +69,10 @@ public class Candidate {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         for(CoreLabel label: labels) {
-            builder.append(label.lemma());
-            builder.append(" ");
+            builder.append(label.lemma())
+                    .append("|")
+                    .append(label.tag())
+                    .append(" ");
         }
         return builder.toString();
     }

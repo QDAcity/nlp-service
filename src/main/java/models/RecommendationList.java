@@ -1,6 +1,5 @@
 package models;
 
-import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.CoreSentence;
 import edu.stanford.nlp.trees.Tree;
 
@@ -54,6 +53,13 @@ public class RecommendationList {
                 .stream()
                 .filter(e -> pred.test(e.getValue()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    public void filterPOSTags() {
+        candidates = candidates
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, c -> c.getValue().filterByPOSTag()));
     }
 
     public Map<Integer, Candidate> getCandidates() {
