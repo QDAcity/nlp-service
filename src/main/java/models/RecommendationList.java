@@ -1,13 +1,13 @@
 package models;
 
-import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.CoreSentence;
 import edu.stanford.nlp.trees.Tree;
-import nlp.NLProcessor;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class RecommendationList {
     private Map<Integer, Candidate> candidates = new HashMap<>();
@@ -38,26 +38,22 @@ public class RecommendationList {
     }
 
     public void restrictToNouns() {
-        HashMap<Integer, Candidate> restrictedMap = new HashMap<>();
-        for(Candidate candidate: candidates.values()) {
-            if(candidate.containsNoun()) {
-                restrictedMap.put(candidate.hashCode(), candidate);
-            }
-        }
-        candidates = restrictedMap;
+        restrictTo(Candidate::containsNoun);
+    }
+
+    public void restrictToSize(int length) {
+        restrictTo(c -> c.getLabels().size() < length);
+    }
+
+    private void restrictTo(Predicate<Candidate> pred) {
+        candidates = candidates
+                .entrySet()
+                .stream()
+                .filter(e -> pred.test(e.getValue()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     public Map<Integer, Candidate> getCandidates() {
         return candidates;
-    }
-
-    public void restrictToSize(int length) {
-        HashMap<Integer, Candidate> restrictedMap = new HashMap<>();
-        for(Candidate candidate: candidates.values()) {
-            if(candidate.getLabels().size() < length) {
-                restrictedMap.put(candidate.hashCode(), candidate);
-            }
-        }
-        candidates = restrictedMap;
     }
 }
