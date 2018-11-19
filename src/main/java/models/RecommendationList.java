@@ -1,5 +1,6 @@
 package models;
 
+import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.CoreSentence;
 import edu.stanford.nlp.trees.Tree;
 
@@ -13,14 +14,17 @@ public class RecommendationList {
     private Map<Integer, Candidate> candidates = new HashMap<>();
 
     public RecommendationList(List<CoreSentence> sentences) {
-//        System.out.println(sentences.get(0).constituencyParse());
-//        List<CoreLabel> leaves = sentences.get(0).constituencyParse().taggedLabeledYield();
-//        for(CoreLabel label: leaves) {
-//            System.out.println(label.value() + "||" + label.lemma());
-//        }
+        testStuff(sentences);
         for(CoreSentence sentence: sentences) {
             candidates.putAll(extractNounPhrases(sentence));
         }
+    }
+
+    private void testStuff(List<CoreSentence> sentences) {
+        CoreSentence sentence = sentences.get(0);
+        Tree sentimentTree = sentence.sentimentTree();
+        System.out.println(sentimentTree);
+//        List<CoreLabel> leaves = sentences.get(0).constituencyParse().taggedLabeledYield();
     }
 
     private Map<Integer, Candidate> extractNounPhrases(CoreSentence sentence) {
@@ -29,8 +33,7 @@ public class RecommendationList {
         for(Tree tree: sentence.constituencyParse()) {
             if(tree.value().equals("NP")) {
                 //construct candidate
-                Tree sentiments = null;
-                Candidate np = new Candidate(tree, tree);
+                Candidate np = new Candidate(tree);
                 nps.put(np.hashCode(), np);
             }
         }

@@ -13,12 +13,11 @@ import java.util.Properties;
 import java.util.stream.Collectors;
 
 public class NLProcessorNew implements NLProcessor{
-    private CoreDocument doc;
     private RecommendationList recommendations;
 
     @Override
     public NLProcessor init(String text) throws IOException {
-        this.doc = new CoreDocument(text);
+        CoreDocument doc = new CoreDocument(text);
         InputStream propStream = new FileInputStream("german.properties");
         Properties props = new Properties();
         props.load(propStream);

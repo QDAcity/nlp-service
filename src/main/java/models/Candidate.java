@@ -11,18 +11,15 @@ import java.util.Objects;
 public class Candidate {
     private final List<CoreLabel> labels = new LinkedList<>();
     private final Tree tree;
-    private final Tree sentiments;
 
     public Candidate(CoreSentence sentence) {
         this.labels.addAll(sentence.tokens());
         this.tree = sentence.constituencyParse();
-        this.sentiments = sentence.sentimentTree();
     }
 
-    public Candidate(Tree constituents, Tree sentiments) {
+    public Candidate(Tree constituents) {
         this.labels.addAll(constituents.taggedLabeledYield());
         this.tree = constituents;
-        this.sentiments = sentiments;
     }
 
     public boolean containsNoun() {
