@@ -1,27 +1,17 @@
 package nlp;
 
-import java.io.IOException;
-import java.util.List;
+import models.Candidate;
+
+import java.util.Map;
 
 public interface NLProcessor {
 
-    NLProcessor init(String text) throws IOException;
+    Map<Integer, Candidate> extractNounPhrases(String text);
 
-    default NLProcessor containingNouns() {
-        return this;
-    }
+    Map<Integer, Candidate> restrictToNouns(Map<Integer, Candidate> candidates);
 
-    default NLProcessor shorterThan(int length) {
-        return this;
-    }
+    Map<Integer, Candidate> restrictToTermLength(Map<Integer, Candidate> candidates, int length);
 
-    default NLProcessor filterPOSTags() {
-        return this;
-    }
+    Map<Integer, Candidate> filterPOSTags(Map<Integer, Candidate> candidates);
 
-    default NLProcessor withSpecifityThreshold() {
-        return this;
-    }
-
-    List<String> recommendations();
 }

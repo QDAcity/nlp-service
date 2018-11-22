@@ -1,68 +1,49 @@
 package models;
 
-import edu.stanford.nlp.pipeline.CoreSentence;
-import edu.stanford.nlp.trees.Tree;
+import nlp.NLProcessor;
+import nlp.BasicNLProcessor;
 
-import java.util.HashMap;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+
 public class RecommendationList {
-    private Map<Integer, Candidate> candidates = new HashMap<>();
+    private Map<Integer, Candidate> candidates;
+    private final NLProcessor processor;
 
-    public RecommendationList(List<CoreSentence> sentences) {
-        testStuff(sentences);
-        for(CoreSentence sentence: sentences) {
-            candidates.putAll(extractNounPhrases(sentence));
-        }
+    private RecommendationList(String text) throws IOException {
+        processor = new BasicNLProcessor();
+        candidates = processor.extractNounPhrases(text);
     }
 
-    private void testStuff(List<CoreSentence> sentences) {
-        CoreSentence sentence = sentences.get(0);
-        Tree sentimentTree = sentence.sentimentTree();
-        System.out.println(sentimentTree);
-//        List<CoreLabel> leaves = sentences.get(0).constituencyParse().taggedLabeledYield();
+    public RecommendationList filterPosTags() {
+        candidates = processor.filterPOSTags(candidates);
+        return this;
     }
 
-    private Map<Integer, Candidate> extractNounPhrases(CoreSentence sentence) {
-        HashMap<Integer, Candidate> nps = new HashMap<>();
-        //filter candidates
-        for(Tree tree: sentence.constituencyParse()) {
-            if(tree.value().equals("NP")) {
-                //construct candidate
-                Candidate np = new Candidate(tree);
-                nps.put(np.hashCode(), np);
-            }
-        }
-        return nps;
+
+    public RecommendationList shorterThan(int length) {
+        candidates = processor.restrictToTermLength(candidates, length);
+        return this;
     }
 
-    public void restrictToNouns() {
-        restrictTo(Candidate::containsNoun);
+
+    public RecommendationList containingNouns() {
+        candidates = processor.restrictToNouns(candidates);
+        return this;
     }
 
-    public void restrictToSize(int length) {
-        restrictTo(c -> c.getLabels().size() < length);
+    public static RecommendationList create(String text) throws IOException {
+        return new RecommendationList(text);
     }
 
-    private void restrictTo(Predicate<Candidate> pred) {
-        candidates = candidates
-                .entrySet()
+    public List<String> asStringList() {
+        return candidates
+                .values()
                 .stream()
-                .filter(e -> pred.test(e.getValue()))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-    }
-
-    public void filterPOSTags() {
-        candidates = candidates
-                .entrySet()
-                .stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, c -> c.getValue().filterByPOSTag()));
-    }
-
-    public Map<Integer, Candidate> getCandidates() {
-        return candidates;
+                .map(Candidate::toString)
+                .collect(Collectors.toList());
     }
 }

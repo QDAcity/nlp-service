@@ -1,8 +1,7 @@
 package api;
 
 import models.ProcessingRequest;
-import nlp.KeywordExtraction;
-import nlp.NLProcessorOld;
+import models.RecommendationList;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -17,23 +16,21 @@ import java.util.List;
 @Path("/recommendations")
 public class RecommendationApi {
 
+
     @POST
-    @Path("/create")
-    public List<String> getRecommendations(ProcessingRequest request) throws IOException {
-        return NLProcessorOld
-                .nounPhrases(request.getText())
-                .recommendations();
+    @Path("/RecommendationList")
+    public RecommendationList getRecommendations(ProcessingRequest request) throws IOException {
+        return RecommendationList
+                .create(request.getText())
+                .containingNouns()
+                .filterPosTags()
+                .shorterThan(4);
     }
 
     @POST
-    @Path("/newapi")
-    public List<String> newRecommendations(ProcessingRequest request) throws IOException {
-        return KeywordExtraction
-                .nounPhrases(request.getText())
-                .containingNouns()
-                .filterPOSTags()
-                .shorterThan(4)
-                .recommendations();
+    @Path("/strings")
+    public List<String> getRecommendationStrings(ProcessingRequest request) throws IOException {
+        return getRecommendations(request).asStringList();
     }
 
 }

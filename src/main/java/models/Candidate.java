@@ -7,11 +7,11 @@ import edu.stanford.nlp.trees.Tree;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class Candidate {
     private List<CoreLabel> labels = new LinkedList<>();
     private final Tree tree;
+    private int confidence = 0;
 
     public Candidate(CoreSentence sentence) {
         this.labels.addAll(sentence.tokens());
@@ -23,33 +23,16 @@ public class Candidate {
         this.tree = constituents;
     }
 
-    public boolean containsNoun() {
-      return labels
-              .stream()
-              .anyMatch(l -> isNoun(l.value()));
-    }
-
-    private boolean isNoun (String labelVal) {
-        return labelVal.contains("N");
-    }
-
-    public Candidate filterByPOSTag() {
-        labels = labels
-                .stream()
-                .filter(l -> hasValidPosTag(l.value()))
-                .collect(Collectors.toList());
-        return this;
-    }
-
-    private boolean hasValidPosTag(String labelVal) {
-        return (labelVal.contains("NN")
-                || labelVal.contains("VB")
-                || labelVal.equals("ADJA")
-                || labelVal.equals("NE"));
+    public void setLabels(List<CoreLabel> labels) {
+        this.labels = labels;
     }
 
     public List<CoreLabel> getLabels() {
         return labels;
+    }
+
+    public Tree getTree() {
+        return tree;
     }
 
     @Override
