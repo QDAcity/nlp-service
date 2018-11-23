@@ -26,6 +26,7 @@ public class BasicNLProcessor implements NLProcessor{
         pipeline = new StanfordCoreNLP(props);
     }
 
+    @Override
     public Map<Integer, Candidate> extractNounPhrases(String text) {
         CoreDocument doc = new CoreDocument(text);
         pipeline.annotate(doc);
@@ -52,11 +53,12 @@ public class BasicNLProcessor implements NLProcessor{
         return nps;
     }
 
-
+    @Override
     public Map<Integer, Candidate> restrictToNouns(Map<Integer, Candidate> candidates) {
         return restrictTo(candidates, this::containsNoun);
     }
 
+    @Override
     public Map<Integer, Candidate> restrictToTermLength(Map<Integer, Candidate> candidates, int length) {
         return restrictTo(candidates, c -> c.getLabels().size() < length);
     }
@@ -69,11 +71,22 @@ public class BasicNLProcessor implements NLProcessor{
                 .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
     }
 
+    @Override
     public Map<Integer, Candidate> filterPOSTags(Map<Integer, Candidate> candidates) {
         return candidates
                 .entrySet()
                 .stream()
                 .collect(Collectors.toMap(Entry::getKey, v -> filterByPOSTag(v.getValue())));
+    }
+
+    @Override
+    public Map<Integer, Candidate> evaluateSpecificity(Map<Integer, Candidate> candidates) {
+
+        return null;
+    }
+
+    private Candidate doEvaluateSpecificity(Candidate candidate) {
+        return null;
     }
 
     private boolean containsNoun(Candidate candidate) {

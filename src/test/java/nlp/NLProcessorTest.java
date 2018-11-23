@@ -1,8 +1,11 @@
 package nlp;
 
 
+import de.linguatools.disco.CorruptConfigFileException;
+import de.linguatools.disco.DISCO;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -30,5 +33,10 @@ public class NLProcessorTest {
 //        }
 //    }
 
-
+    @Test
+    public void test() throws IOException, CorruptConfigFileException {
+        DISCO disco = DISCO.load("discoresources/cc.de.300.vec");
+        int number = disco.frequency("papp");
+        System.out.println(number);
+    }
 }

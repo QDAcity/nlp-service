@@ -59,4 +59,14 @@ public class Candidate {
         }
         return builder.toString();
     }
+
+    public String originalText() {
+        StringBuilder builder = new StringBuilder();
+        for(CoreLabel label: labels) {
+            builder.append(label.originalText())
+                    .append(" ");
+        }
+        String oText = builder.toString();
+        return oText.substring(0, oText.length()-1); //remove last space
+    }
 }

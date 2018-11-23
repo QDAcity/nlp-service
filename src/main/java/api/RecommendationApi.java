@@ -16,21 +16,15 @@ import java.util.List;
 @Path("/recommendations")
 public class RecommendationApi {
 
-
     @POST
-    @Path("/RecommendationList")
-    public RecommendationList getRecommendations(ProcessingRequest request) throws IOException {
+    @Path("/create")
+    public List<String> getRecommendationStrings(ProcessingRequest request) throws IOException {
         return RecommendationList
                 .create(request.getText())
                 .containingNouns()
-                .filterPosTags()
-                .shorterThan(4);
-    }
-
-    @POST
-    @Path("/strings")
-    public List<String> getRecommendationStrings(ProcessingRequest request) throws IOException {
-        return getRecommendations(request).asStringList();
+//                .filterPosTags()
+                .shorterThan(5)
+                .asStringList();
     }
 
 }
