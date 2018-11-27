@@ -1,5 +1,6 @@
 package api;
 
+import de.linguatools.disco.CorruptConfigFileException;
 import models.ProcessingRequest;
 import models.RecommendationList;
 
@@ -18,12 +19,14 @@ public class RecommendationApi {
 
     @POST
     @Path("/create")
-    public List<String> getRecommendationStrings(ProcessingRequest request) throws IOException {
+    public List<String> getRecommendationStrings(ProcessingRequest request) throws IOException, CorruptConfigFileException {
         return RecommendationList
                 .create(request.getText())
                 .containingNouns()
 //                .filterPosTags()
-                .shorterThan(5)
+                .shorterThan(4)
+                .evaluateSpecificity()
+                .confidence(100)
                 .asStringList();
     }
 

@@ -16,4 +16,5 @@ public interface NLProcessor {
 
     Map<Integer, Candidate> evaluateSpecificity(Map<Integer, Candidate> candidates);
 
+    Map<Integer,Candidate> filterByRating(Map<Integer, Candidate> candidates, int confVal);
 }

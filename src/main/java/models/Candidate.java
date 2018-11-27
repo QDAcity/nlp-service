@@ -11,11 +11,21 @@ import java.util.Objects;
 public class Candidate {
     private List<CoreLabel> labels = new LinkedList<>();
     private final Tree tree;
-    private int confidence = 0;
+
+    public long getConfidence() {
+        return confidence;
+    }
+
+    private long confidence = 0;
 
     public Candidate(CoreSentence sentence) {
         this.labels.addAll(sentence.tokens());
         this.tree = sentence.constituencyParse();
+    }
+
+    public Candidate(Candidate old) {
+        this.labels = old.labels;
+        this.tree = old.tree;
     }
 
     public Candidate(Tree constituents) {
@@ -33,6 +43,10 @@ public class Candidate {
 
     public Tree getTree() {
         return tree;
+    }
+
+    public void updateConfidence(long delta) {
+        confidence += delta;
     }
 
     @Override
@@ -57,6 +71,7 @@ public class Candidate {
                     .append(label.tag())
                     .append(" ");
         }
+        builder.append("|").append(confidence);
         return builder.toString();
     }
 
@@ -64,6 +79,16 @@ public class Candidate {
         StringBuilder builder = new StringBuilder();
         for(CoreLabel label: labels) {
             builder.append(label.originalText())
+                    .append(" ");
+        }
+        String oText = builder.toString();
+        return oText.substring(0, oText.length()-1); //remove last space
+    }
+
+    public String lemmatizedText() {
+        StringBuilder builder = new StringBuilder();
+        for(CoreLabel label: labels) {
+            builder.append(label.lemma())
                     .append(" ");
         }
         String oText = builder.toString();

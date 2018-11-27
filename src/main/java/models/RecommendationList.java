@@ -1,5 +1,6 @@
 package models;
 
+import de.linguatools.disco.CorruptConfigFileException;
 import nlp.NLProcessor;
 import nlp.BasicNLProcessor;
 
@@ -13,7 +14,7 @@ public class RecommendationList {
     private Map<Integer, Candidate> candidates;
     private final NLProcessor processor;
 
-    private RecommendationList(String text) throws IOException {
+    private RecommendationList(String text) throws IOException, CorruptConfigFileException {
         processor = new BasicNLProcessor();
         candidates = processor.extractNounPhrases(text);
     }
@@ -35,15 +36,25 @@ public class RecommendationList {
         return this;
     }
 
-    public static RecommendationList create(String text) throws IOException {
+    public RecommendationList evaluateSpecificity() {
+        candidates = processor.evaluateSpecificity(candidates);
+        return this;
+    }
+
+    public static RecommendationList create(String text) throws IOException, CorruptConfigFileException {
         return new RecommendationList(text);
+    }
+
+    public RecommendationList confidence(int confVal) {
+        candidates = processor.filterByRating(candidates, confVal);
+        return this;
     }
 
     public List<String> asStringList() {
         return candidates
                 .values()
                 .stream()
-                .map(Candidate::toString)
+                .map(Candidate::originalText)
                 .collect(Collectors.toList());
     }
 }

@@ -1,5 +1,8 @@
 package nlp;
 
+import de.linguatools.disco.CorruptConfigFileException;
+import de.linguatools.disco.DISCO;
+import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.CoreDocument;
 import edu.stanford.nlp.pipeline.CoreSentence;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
@@ -17,20 +20,22 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class BasicNLProcessor implements NLProcessor{
+    private CoreDocument doc;
     private final StanfordCoreNLP pipeline;
+    private final DISCO disco;
 
-    public BasicNLProcessor() throws IOException {
+    public BasicNLProcessor() throws IOException, CorruptConfigFileException {
         InputStream propStream = new FileInputStream("german.properties");
         Properties props = new Properties();
         props.load(propStream);
         pipeline = new StanfordCoreNLP(props);
+        disco = DISCO.load("discoresources/de.denseMatrix");
     }
 
     @Override
     public Map<Integer, Candidate> extractNounPhrases(String text) {
-        CoreDocument doc = new CoreDocument(text);
+        doc = new CoreDocument(text);
         pipeline.annotate(doc);
-
         HashMap<Integer, Candidate> nps = new HashMap<>();
 
         for(CoreSentence sentence: doc.sentences()) {
@@ -81,12 +86,55 @@ public class BasicNLProcessor implements NLProcessor{
 
     @Override
     public Map<Integer, Candidate> evaluateSpecificity(Map<Integer, Candidate> candidates) {
-
-        return null;
+        return candidates
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(Entry::getKey, v -> doEvaluateSpecificity(v.getValue())));
     }
 
+    @Override
+    public Map<Integer, Candidate> filterByRating(Map<Integer, Candidate> candidates, int confVal) {
+        return restrictTo(candidates, cand -> cand.getConfidence() >= confVal);
+    }
+
+
+    /**
+     * checks the specificity for every word in the term and returns the highest value
+     * @param candidate the term to check
+     * @return the highest specificity value of the words
+     */
     private Candidate doEvaluateSpecificity(Candidate candidate) {
-        return null;
+        try {
+            Candidate filtered = restrictToNouns(candidate);
+            long maxSpec = 0;
+            for(CoreLabel word: filtered.getLabels()) {
+                System.out.println("checking: " + word.originalText()+"||"+word.toString());
+                long globalFrequency = disco.frequency(word.originalText());
+                long globalInvRatio = (globalFrequency > 0)? disco.numberOfWords() / globalFrequency : disco.numberOfWords();
+                System.out.println("globalInvratio: "+globalInvRatio);
+                long localFrequency = countOccurences(word.originalText(), doc);
+                long localInvRatio = doc.tokens().size() / localFrequency;
+                System.out.println("localInvRatio: "+localInvRatio);
+                long specificity = globalInvRatio / localInvRatio;
+                System.out.println("specifity: "+ specificity);
+                if(specificity > maxSpec) {
+                    maxSpec = specificity;
+                }
+            }
+            candidate.updateConfidence(maxSpec);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return candidate;
+    }
+
+    private long countOccurences(String s, CoreDocument doc) {
+        return doc
+                .tokens()
+                .stream()
+                .filter(t -> t.originalText().equals(s))
+                .count();
     }
 
     private boolean containsNoun(Candidate candidate) {
@@ -110,10 +158,23 @@ public class BasicNLProcessor implements NLProcessor{
         return candidate;
     }
 
+    private Candidate restrictToNouns(Candidate candidate) {
+        Candidate newCand = new Candidate(candidate);
+        newCand.setLabels(
+                candidate
+                        .getLabels()
+                        .stream()
+                        .filter(coreLabel -> coreLabel.value().equals("NN"))
+                        .collect(Collectors.toList())
+        );
+        return newCand;
+    }
+
     private boolean hasValidPosTag(String labelVal) {
         return (labelVal.contains("NN")
                 || labelVal.contains("VB")
                 || labelVal.equals("ADJA")
                 || labelVal.equals("NE"));
     }
+
 }
