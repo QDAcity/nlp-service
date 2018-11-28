@@ -23,10 +23,9 @@ public class RecommendationApi {
         return RecommendationList
                 .create(request.getText())
                 .containingNouns()
-//                .filterPosTags()
                 .shorterThan(4)
-                .evaluateSpecificity()
-                .confidence(100)
+//                .evaluateSpecificity()
+//                .confidence(100)
                 .asStringList();
     }
 

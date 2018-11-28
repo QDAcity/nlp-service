@@ -15,7 +15,7 @@ public class RecommendationList {
     private final NLProcessor processor;
 
     private RecommendationList(String text) throws IOException, CorruptConfigFileException {
-        processor = new BasicNLProcessor();
+        processor = new BasicNLProcessor("english.properties");
         candidates = processor.extractNounPhrases(text);
     }
 

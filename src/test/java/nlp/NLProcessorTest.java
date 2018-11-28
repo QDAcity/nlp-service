@@ -48,9 +48,14 @@ public class NLProcessorTest {
 
     @Test
     public void test() throws IOException, CorruptConfigFileException, WrongWordspaceTypeException {
-        DISCO disco = DISCO.load("discoresources/de.denseMatrix");
+        DISCO disco = DISCO.load("discoresources/en.denseMatrix");
         System.out.println(disco.numberOfWords());
-        System.out.println(disco.frequency("führende Wissenschaftler"));
+        System.out.println(disco.frequency("horse"));
+        System.out.println(disco.frequency("bull"));
+        System.out.println(disco.frequency("strange"));
+        System.out.println(disco.getMinFreq());
+
+
     }
 
     @Test
@@ -63,7 +68,7 @@ public class NLProcessorTest {
         String all = hundert;
 
         RecommendationApi api = new RecommendationApi();
-        ProcessingRequest request = new ProcessingRequest(INTERVIEW);
+        ProcessingRequest request = new ProcessingRequest(TEXT);
         List<String> recs = api.getRecommendationStrings(request);
         System.out.println(recs);
     }

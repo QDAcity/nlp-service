@@ -24,8 +24,8 @@ public class BasicNLProcessor implements NLProcessor{
     private final StanfordCoreNLP pipeline;
     private final DISCO disco;
 
-    public BasicNLProcessor() throws IOException, CorruptConfigFileException {
-        InputStream propStream = new FileInputStream("german.properties");
+    public BasicNLProcessor(String configFile) throws IOException, CorruptConfigFileException {
+        InputStream propStream = new FileInputStream(configFile);
         Properties props = new Properties();
         props.load(propStream);
         pipeline = new StanfordCoreNLP(props);
