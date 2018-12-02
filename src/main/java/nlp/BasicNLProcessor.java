@@ -8,6 +8,8 @@ import edu.stanford.nlp.pipeline.CoreSentence;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.trees.Tree;
 import models.Candidate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -20,16 +22,18 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class BasicNLProcessor implements NLProcessor{
+    private static final Logger logger = LoggerFactory.getLogger(BasicNLProcessor.class);
     private CoreDocument doc;
     private final StanfordCoreNLP pipeline;
-    private final DISCO disco;
+    private final CorpusAdapter referenceCorpus;
+
 
     public BasicNLProcessor(String configFile) throws IOException, CorruptConfigFileException {
         InputStream propStream = new FileInputStream(configFile);
         Properties props = new Properties();
         props.load(propStream);
         pipeline = new StanfordCoreNLP(props);
-        disco = DISCO.load("discoresources/de.denseMatrix");
+        referenceCorpus = new DiscoAdapter("discoresources/en.denseMatrix");
     }
 
     @Override
@@ -41,7 +45,6 @@ public class BasicNLProcessor implements NLProcessor{
         for(CoreSentence sentence: doc.sentences()) {
             nps.putAll(doExtractNounPhrases(sentence));
         }
-
         return nps;
     }
 
@@ -89,7 +92,7 @@ public class BasicNLProcessor implements NLProcessor{
         return candidates
                 .entrySet()
                 .stream()
-                .collect(Collectors.toMap(Entry::getKey, v -> doEvaluateSpecificity(v.getValue())));
+                .collect(Collectors.toMap(Entry::getKey, v -> evaluateSpecificity(v.getValue())));
     }
 
     @Override
@@ -97,34 +100,25 @@ public class BasicNLProcessor implements NLProcessor{
         return restrictTo(candidates, cand -> cand.getConfidence() >= confVal);
     }
 
+    private Candidate evaluateSpecificity(Candidate candidate) {
+        long globalWordCount = referenceCorpus.numberOfWords();
+        long localWordCount = doc.tokens().size();
 
-    /**
-     * checks the specificity for every word in the term and returns the highest value
-     * @param candidate the term to check
-     * @return the highest specificity value of the words
-     */
-    private Candidate doEvaluateSpecificity(Candidate candidate) {
         try {
-            Candidate filtered = restrictToNouns(candidate);
-            long maxSpec = 0;
-            for(CoreLabel word: filtered.getLabels()) {
-                System.out.println("checking: " + word.originalText()+"||"+word.toString());
-                long globalFrequency = disco.frequency(word.originalText());
-                long globalInvRatio = (globalFrequency > 0)? disco.numberOfWords() / globalFrequency : disco.numberOfWords();
-                System.out.println("globalInvratio: "+globalInvRatio);
-                long localFrequency = countOccurences(word.originalText(), doc);
-                long localInvRatio = doc.tokens().size() / localFrequency;
-                System.out.println("localInvRatio: "+localInvRatio);
-                long specificity = globalInvRatio / localInvRatio;
-                System.out.println("specifity: "+ specificity);
-                if(specificity > maxSpec) {
-                    maxSpec = specificity;
+            long maxFrequency = 0;
+            for(CoreLabel label: restrictToNouns(candidate).getLabels()) {
+                String word = label.lemma();
+                long localOccurrences = countOccurences(word, doc);
+                long globalOccurrences = referenceCorpus.countOccurences(word);
+                long frequency = localOccurrences * globalWordCount - globalOccurrences * localWordCount; //overflow possible?
+                logger.info("Computing word frequency for " + word + ": " + frequency);
+                if(frequency > maxFrequency) {
+                    maxFrequency = frequency;
                 }
             }
-            candidate.updateConfidence(maxSpec);
-
+            candidate.updateConfidence(maxFrequency);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.warn(e.toString());
         }
         return candidate;
     }
