@@ -3,16 +3,26 @@ import io.dropwizard.Configuration;
 import org.hibernate.validator.constraints.NotEmpty;
 
 public class NLPConfig extends Configuration {
-    @NotEmpty
-    private String template;
+    private String configFile;
+    private String corpusFile;
 
     @JsonProperty
-    public String getTemplate() {
-        return template;
+    public String getConfigFile() {
+        return configFile;
     }
 
     @JsonProperty
-    public void setTemplate(String template) {
-        this.template = template;
+    public void setConfigFile(String configFile) {
+        this.configFile = configFile;
+    }
+
+    @JsonProperty
+    public String getCorpusFile() {
+        return corpusFile;
+    }
+
+    @JsonProperty
+    public void setCorpusFile(String corpusFile) {
+        this.corpusFile = corpusFile;
     }
 }

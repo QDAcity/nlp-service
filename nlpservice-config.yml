@@ -1,1 +1,3 @@
-template: value
+configFile: english.properties
+
+corpusFile: discoresources/en.denseMatrix

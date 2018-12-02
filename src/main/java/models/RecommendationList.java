@@ -14,8 +14,8 @@ public class RecommendationList {
     private Map<Integer, Candidate> candidates;
     private final NLProcessor processor;
 
-    private RecommendationList(String text) throws IOException, CorruptConfigFileException {
-        processor = new BasicNLProcessor("english.properties");
+    private RecommendationList(String text, String configFile, String corpusFile) throws IOException, CorruptConfigFileException {
+        processor = new BasicNLProcessor(configFile, corpusFile);
         candidates = processor.extractNounPhrases(text);
     }
 
@@ -41,8 +41,8 @@ public class RecommendationList {
         return this;
     }
 
-    public static RecommendationList create(String text) throws IOException, CorruptConfigFileException {
-        return new RecommendationList(text);
+    public static RecommendationList create(String text, String configFile, String corpusFile) throws IOException, CorruptConfigFileException {
+        return new RecommendationList(text, configFile, corpusFile);
     }
 
     public RecommendationList confidence(int confVal) {

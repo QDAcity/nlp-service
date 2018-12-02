@@ -16,15 +16,22 @@ import java.util.List;
 @Consumes(MediaType.APPLICATION_JSON)
 @Path("/recommendations")
 public class RecommendationApi {
+    private final String configFile;
+    private final String corpusFile;
+
+    public RecommendationApi(String configFile, String corpusFile) {
+        this.configFile = configFile;
+        this.corpusFile = corpusFile;
+    }
 
     @POST
     @Path("/create")
     public List<String> getRecommendationStrings(ProcessingRequest request) throws IOException, CorruptConfigFileException {
         return RecommendationList
-                .create(request.getText())
+                .create(request.getText(), configFile, corpusFile)
                 .containingNouns()
                 .shorterThan(4)
-//                .evaluateSpecificity()
+                .evaluateSpecificity()
 //                .confidence(100)
                 .asStringList();
     }

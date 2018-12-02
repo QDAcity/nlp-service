@@ -1,7 +1,6 @@
 package nlp;
 
 import de.linguatools.disco.CorruptConfigFileException;
-import de.linguatools.disco.DISCO;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.CoreDocument;
 import edu.stanford.nlp.pipeline.CoreSentence;
@@ -28,12 +27,12 @@ public class BasicNLProcessor implements NLProcessor{
     private final CorpusAdapter referenceCorpus;
 
 
-    public BasicNLProcessor(String configFile) throws IOException, CorruptConfigFileException {
+    public BasicNLProcessor(String configFile, String corpusFile) throws IOException, CorruptConfigFileException {
         InputStream propStream = new FileInputStream(configFile);
         Properties props = new Properties();
         props.load(propStream);
         pipeline = new StanfordCoreNLP(props);
-        referenceCorpus = new DiscoAdapter("discoresources/en.denseMatrix");
+        referenceCorpus = new DiscoAdapter(corpusFile);
     }
 
     @Override

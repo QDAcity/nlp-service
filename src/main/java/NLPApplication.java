@@ -9,7 +9,7 @@ public class NLPApplication extends Application<NLPConfig> {
     }
 
     public void run(NLPConfig nlpConfig, Environment environment) throws Exception {
-        final RecommendationApi recommendationApi = new RecommendationApi();
+        final RecommendationApi recommendationApi = new RecommendationApi(nlpConfig.getConfigFile(), nlpConfig.getCorpusFile());
         environment.jersey().register(recommendationApi);
     }
 
