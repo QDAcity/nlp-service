@@ -18,11 +18,6 @@ public class Candidate {
 
     private long confidence = 0;
 
-    public Candidate(CoreSentence sentence) {
-        this.labels.addAll(sentence.tokens());
-        this.tree = sentence.constituencyParse();
-    }
-
     public Candidate(Candidate old) {
         this.labels = old.labels;
         this.tree = old.tree;
