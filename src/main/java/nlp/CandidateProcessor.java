@@ -3,11 +3,13 @@ package nlp;
 import de.linguatools.disco.CorruptConfigFileException;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.CoreDocument;
+import edu.stanford.nlp.trees.Tree;
 import models.Candidate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class CandidateProcessor {
@@ -87,6 +89,21 @@ public class CandidateProcessor {
                 || labelVal.contains("VB")
                 || labelVal.equals("ADJA")
                 || labelVal.equals("NE"));
+    }
+
+    /**
+     * Creates a keyword candidate from a given stanford dependency tree.
+     * Before creating, punctuation is removed from the labels (labelValue "$").
+     * @param tree The tree from which the candidate shall be created.
+     * @return The newly created candidate.
+     */
+    protected Candidate createCandidate(Tree tree) {
+        List<CoreLabel> filteredLabels = tree
+                .taggedLabeledYield()
+                .stream()
+                .filter(l -> l.value().equals("$"))
+                .collect(Collectors.toList());
+        return new Candidate(tree, filteredLabels);
     }
 
 }

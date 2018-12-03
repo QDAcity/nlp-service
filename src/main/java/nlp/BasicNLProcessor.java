@@ -53,10 +53,7 @@ public class BasicNLProcessor implements NLProcessor{
         //filter candidates
         for(Tree tree: sentence.constituencyParse()) {
             if(tree.value().equals("NP")) {
-                //construct candidate
-                List<CoreLabel> labels = tree.taggedLabeledYield();
-                labels.stream().filter(l -> l.value().equals("$")).collect(Collectors.toList());
-                Candidate np = new Candidate(tree);
+                Candidate np = candidateProcessor.createCandidate(tree);
                 nps.put(np.hashCode(), np);
             }
         }

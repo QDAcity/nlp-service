@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class Candidate {
-    private List<CoreLabel> labels = new LinkedList<>();
+    private List<CoreLabel> labels;
     private final Tree tree;
 
     public long getConfidence() {
@@ -23,8 +23,8 @@ public class Candidate {
         this.tree = old.tree;
     }
 
-    public Candidate(Tree constituents) {
-        this.labels.addAll(constituents.taggedLabeledYield());
+    public Candidate(Tree constituents, List<CoreLabel> labels) {
+        this.labels = labels;
         this.tree = constituents;
     }
 
