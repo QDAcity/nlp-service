@@ -28,8 +28,8 @@ public class Candidate {
         this.tree = constituents;
     }
 
-    public void setLabels(List<CoreLabel> labels) {
-        this.labels = labels;
+    public Candidate withLabels(List<CoreLabel> labels) {
+        return new Candidate(tree, labels);
     }
 
     public List<CoreLabel> getLabels() {
