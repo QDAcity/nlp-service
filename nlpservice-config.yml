@@ -1,3 +1,9 @@
-configFile: english.properties
+configFile: german.properties
 
-corpusFile: discoresources/en.denseMatrix
+corpusFile: discoresources/de.denseMatrix
+
+logging:
+  level: INFO
+  loggers:
+    "models.RecommendationList": DEBUG
+    "nlp:BasicNLProcessor": DEBUG

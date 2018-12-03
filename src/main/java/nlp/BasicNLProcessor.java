@@ -1,5 +1,6 @@
 package nlp;
 
+import com.google.common.base.Objects;
 import de.linguatools.disco.CorruptConfigFileException;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.CoreDocument;
@@ -7,6 +8,7 @@ import edu.stanford.nlp.pipeline.CoreSentence;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.trees.Tree;
 import models.Candidate;
+import net.sourceforge.argparse4j.internal.ArgumentParserImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -169,5 +171,4 @@ public class BasicNLProcessor implements NLProcessor{
                 || labelVal.equals("ADJA")
                 || labelVal.equals("NE"));
     }
-
 }
