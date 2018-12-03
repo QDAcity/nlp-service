@@ -1,6 +1,5 @@
 package nlp;
 
-import com.google.common.base.Objects;
 import de.linguatools.disco.CorruptConfigFileException;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.CoreDocument;
@@ -8,7 +7,6 @@ import edu.stanford.nlp.pipeline.CoreSentence;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.trees.Tree;
 import models.Candidate;
-import net.sourceforge.argparse4j.internal.ArgumentParserImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +14,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -26,7 +25,7 @@ public class BasicNLProcessor implements NLProcessor{
     private static final Logger logger = LoggerFactory.getLogger(BasicNLProcessor.class);
     private CoreDocument doc;
     private final StanfordCoreNLP pipeline;
-    private final CorpusAdapter referenceCorpus;
+    private final CandidateProcessor candidateProcessor;
 
 
     public BasicNLProcessor(String configFile, String corpusFile) throws IOException, CorruptConfigFileException {
@@ -34,7 +33,7 @@ public class BasicNLProcessor implements NLProcessor{
         Properties props = new Properties();
         props.load(propStream);
         pipeline = new StanfordCoreNLP(props);
-        referenceCorpus = new DiscoAdapter(corpusFile);
+        candidateProcessor = new CandidateProcessor(corpusFile);
     }
 
     @Override
@@ -55,6 +54,8 @@ public class BasicNLProcessor implements NLProcessor{
         for(Tree tree: sentence.constituencyParse()) {
             if(tree.value().equals("NP")) {
                 //construct candidate
+                List<CoreLabel> labels = tree.taggedLabeledYield();
+                labels.stream().filter(l -> l.value().equals("$")).collect(Collectors.toList());
                 Candidate np = new Candidate(tree);
                 nps.put(np.hashCode(), np);
             }
@@ -63,8 +64,13 @@ public class BasicNLProcessor implements NLProcessor{
     }
 
     @Override
+    public Map<Integer, Candidate> filterByRating(Map<Integer, Candidate> candidates, int confVal) {
+        return restrictTo(candidates, cand -> cand.getConfidence() >= confVal);
+    }
+
+    @Override
     public Map<Integer, Candidate> restrictToNouns(Map<Integer, Candidate> candidates) {
-        return restrictTo(candidates, this::containsNoun);
+        return restrictTo(candidates, candidateProcessor::containsNoun);
     }
 
     @Override
@@ -85,7 +91,7 @@ public class BasicNLProcessor implements NLProcessor{
         return candidates
                 .entrySet()
                 .stream()
-                .collect(Collectors.toMap(Entry::getKey, v -> filterByPOSTag(v.getValue())));
+                .collect(Collectors.toMap(Entry::getKey, v -> candidateProcessor.filterByPOSTag(v.getValue())));
     }
 
     @Override
@@ -93,82 +99,7 @@ public class BasicNLProcessor implements NLProcessor{
         return candidates
                 .entrySet()
                 .stream()
-                .collect(Collectors.toMap(Entry::getKey, v -> evaluateSpecificity(v.getValue())));
+                .collect(Collectors.toMap(Entry::getKey, v -> candidateProcessor.evaluateSpecificity(v.getValue(), doc)));
     }
 
-    @Override
-    public Map<Integer, Candidate> filterByRating(Map<Integer, Candidate> candidates, int confVal) {
-        return restrictTo(candidates, cand -> cand.getConfidence() >= confVal);
-    }
-
-    private Candidate evaluateSpecificity(Candidate candidate) {
-        long globalWordCount = referenceCorpus.numberOfWords();
-        long localWordCount = doc.tokens().size();
-
-        try {
-            long maxFrequency = 0;
-            for(CoreLabel label: restrictToNouns(candidate).getLabels()) {
-                String word = label.lemma();
-                long localOccurrences = countOccurences(word, doc);
-                long globalOccurrences = referenceCorpus.countOccurences(word);
-                long frequency = localOccurrences * globalWordCount - globalOccurrences * localWordCount; //overflow possible?
-                logger.info("Computing word frequency for " + word + ": " + frequency);
-                if(frequency > maxFrequency) {
-                    maxFrequency = frequency;
-                }
-            }
-            candidate.updateConfidence(maxFrequency);
-        } catch (IOException e) {
-            logger.warn(e.toString());
-        }
-        return candidate;
-    }
-
-    private long countOccurences(String s, CoreDocument doc) {
-        return doc
-                .tokens()
-                .stream()
-                .filter(t -> t.originalText().equals(s))
-                .count();
-    }
-
-    private boolean containsNoun(Candidate candidate) {
-        return candidate
-                .getLabels()
-                .stream()
-                .anyMatch(l -> isNoun(l.value()));
-    }
-
-    private boolean isNoun (String labelVal) {
-        return labelVal.contains("N");
-    }
-
-    private Candidate filterByPOSTag(Candidate candidate) {
-        candidate.setLabels(
-                candidate
-                    .getLabels()
-                        .stream()
-                        .filter(l -> hasValidPosTag(l.value()))
-                        .collect(Collectors.toList()));
-        return candidate;
-    }
-
-    private Candidate restrictToNouns(Candidate candidate) {
-        Candidate newCand = new Candidate(candidate);
-        newCand.setLabels(
-                candidate
-                        .getLabels()
-                        .stream()
-                        .filter(coreLabel -> coreLabel.value().equals("NN"))
-                        .collect(Collectors.toList())
-        );
-        return newCand;
-    }
-
-    private boolean hasValidPosTag(String labelVal) {
-        return (labelVal.contains("NN")
-                || labelVal.contains("VB")
-                || labelVal.equals("ADJA")
-                || labelVal.equals("NE"));
-    }
 }
