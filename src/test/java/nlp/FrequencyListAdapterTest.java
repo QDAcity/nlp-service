@@ -12,7 +12,7 @@ public class FrequencyListAdapterTest {
 
     @BeforeClass
     public static void setUp() throws IOException {
-        adapter = new FrequencyListAdapter("frequencyList");
+        adapter = new FrequencyListAdapter("resources/frequencyList");
     }
 
     @Test
