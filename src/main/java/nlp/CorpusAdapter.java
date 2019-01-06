@@ -4,8 +4,7 @@ import java.io.IOException;
 
 public interface CorpusAdapter {
 
-
     long numberOfWords();
 
-    long countOccurences(String word) throws IOException;
+    long countOccurrences(String word) throws IOException;
 }

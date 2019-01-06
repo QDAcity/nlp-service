@@ -81,8 +81,8 @@ public class CandidateProcessor {
             for(CoreLabel label: restrictToNouns(candidate).getLabels()) {
                 String word = label.lemma();
                 long localOccurrences = countOccurences(word, doc);
-                long globalOccurrences = referenceCorpus.countOccurences(word);
-                long frequency = localOccurrences * globalWordCount - globalOccurrences * localWordCount; //overflow possible?
+                long globalOccurrences = referenceCorpus.countOccurrences(word);
+                long frequency = localOccurrences * globalWordCount - globalOccurrences * localWordCount;
                 logger.info("Computing word frequency for " + word + ": " + frequency);
                 if(frequency > maxFrequency) {
                     maxFrequency = frequency;
@@ -102,5 +102,4 @@ public class CandidateProcessor {
                 .filter(t -> t.originalText().equals(s))
                 .count();
     }
-
 }

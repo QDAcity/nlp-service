@@ -18,7 +18,7 @@ public class DiscoAdapter implements CorpusAdapter {
     }
 
     @Override
-    public long countOccurences(String word) throws IOException {
+    public long countOccurrences(String word) throws IOException {
         return disco.frequency(word);
     }
 }

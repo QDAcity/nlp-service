@@ -1,10 +1,9 @@
 package models;
 
 import edu.stanford.nlp.ling.CoreLabel;
-import edu.stanford.nlp.pipeline.CoreSentence;
 import edu.stanford.nlp.trees.Tree;
 
-import java.util.LinkedList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -18,13 +17,8 @@ public class Candidate {
 
     private long confidence = 0;
 
-    public Candidate(Candidate old) {
-        this.labels = old.labels;
-        this.tree = old.tree;
-    }
-
     public Candidate(Tree constituents, List<CoreLabel> labels) {
-        this.labels = labels;
+        this.labels = Collections.unmodifiableList(labels);
         this.tree = constituents;
     }
 
@@ -60,7 +54,7 @@ public class Candidate {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        for(CoreLabel label: labels) {
+        for (CoreLabel label : labels) {
             builder.append(label.lemma())
                     .append("|")
                     .append(label.tag())
@@ -72,21 +66,21 @@ public class Candidate {
 
     public String originalText() {
         StringBuilder builder = new StringBuilder();
-        for(CoreLabel label: labels) {
+        for (CoreLabel label : labels) {
             builder.append(label.originalText())
                     .append(" ");
         }
         String oText = builder.toString();
-        return oText.substring(0, oText.length()-1); //remove last space
+        return oText.substring(0, oText.length() - 1); //remove last space
     }
 
     public String lemmatizedText() {
         StringBuilder builder = new StringBuilder();
-        for(CoreLabel label: labels) {
+        for (CoreLabel label : labels) {
             builder.append(label.lemma())
                     .append(" ");
         }
         String oText = builder.toString();
-        return oText.substring(0, oText.length()-1); //remove last space
+        return oText.substring(0, oText.length() - 1); //remove last space
     }
 }
