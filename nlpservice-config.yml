@@ -1,6 +1,6 @@
-configFile: german.properties
+configFile: english.properties
 
-corpusFile: discoresources/de.denseMatrix
+corpusFile: resources/frequencyList
 
 logging:
   level: INFO
