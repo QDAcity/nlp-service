@@ -12,17 +12,17 @@ public class FrequencyListAdapterTest {
 
     @BeforeClass
     public static void setUp() throws IOException {
-        adapter = new FrequencyListAdapter("resources/frequencyList");
+        adapter = new FrequencyListAdapter("resources/frequencyLists/bnc.frequencies");
     }
 
     @Test
     public void testNumberOfWords() {
-        Assert.assertEquals(1065374, adapter.numberOfWords());
+        Assert.assertEquals(100000000, adapter.numberOfWords());
     }
 
     @Test
     public void testCountOccurrences() throws IOException {
-        Assert.assertEquals(826051, adapter.countOccurrences("another"));
+        Assert.assertEquals(60182, adapter.countOccurrences("another"));
     }
 
 

@@ -1,5 +1,8 @@
 package nlp;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -8,6 +11,7 @@ import java.util.HashMap;
 import java.util.Optional;
 
 public class FrequencyListAdapter implements CorpusAdapter {
+    private final Logger logger = LoggerFactory.getLogger(FrequencyListAdapter.class);
 
     private static final int LINE_BUF = 128;
 
@@ -15,7 +19,7 @@ public class FrequencyListAdapter implements CorpusAdapter {
     private static final int TAB = 9;
 
     private final HashMap<String, Long> frequencies = new HashMap<>(1000000);
-    private long numberOfWords;
+    private long numberOfIncludedWords;
 
     public FrequencyListAdapter(String filePath) throws IOException {
         init(filePath);
@@ -59,17 +63,18 @@ public class FrequencyListAdapter implements CorpusAdapter {
                 }
             }
         } while(bufSize != -1);
-        numberOfWords = lineCount;
+        numberOfIncludedWords = lineCount;
     }
 
     @Override
     public long numberOfWords() {
-        return numberOfWords;
+        return 100000000;
     }
 
     @Override
-    public long countOccurrences(String word) throws IOException {
+    public long countOccurrences(String word) {
         Optional<Long> count = Optional.ofNullable(frequencies.get(word));
+        logger.info("Word Occurences for " + word + ": " + String.valueOf(count.orElse(0L)));
         return count.orElse(0L);
     }
 }
