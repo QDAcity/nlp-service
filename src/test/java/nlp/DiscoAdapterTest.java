@@ -12,7 +12,7 @@ public class DiscoAdapterTest {
 
     @Test
     public void testEnglishCorpus() throws IOException, CorruptConfigFileException {
-        disco = DISCO.load("discoresources/cc.en.300-COL.denseMatrix");
+        disco = DISCO.load("resources/disco/cc.en.300-COL.denseMatrix");
         int highFreqencyExpected = disco.frequency("people");
         System.out.println(highFreqencyExpected);
         int lowFrequencyExpected = disco.frequency("hallux");
