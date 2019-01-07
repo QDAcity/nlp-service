@@ -18,7 +18,7 @@ public class CandidateProcessor {
     private final CorpusAdapter referenceCorpus;
 
     protected CandidateProcessor(String corpusFile) throws IOException, CorruptConfigFileException {
-        referenceCorpus = new DiscoAdapter(corpusFile);
+        referenceCorpus = new FrequencyListAdapter(corpusFile);
     }
 
     protected Candidate filterByPOSTag(Candidate candidate) {
