@@ -99,7 +99,7 @@ public class CandidateProcessor {
         return doc
                 .tokens()
                 .stream()
-                .filter(t -> t.originalText().equals(s))
+                .filter(t -> t.lemma().equals(s))
                 .count();
     }
 }
