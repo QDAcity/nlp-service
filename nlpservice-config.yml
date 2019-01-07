@@ -1,6 +1,6 @@
 configFile: english.properties
 
-corpusFile: resources/frequencyList
+corpusFile: resources/bnc.frequencies
 
 logging:
   level: INFO
