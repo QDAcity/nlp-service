@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Optional;
 
 public class FrequencyListAdapter implements CorpusAdapter {
 
@@ -68,6 +69,7 @@ public class FrequencyListAdapter implements CorpusAdapter {
 
     @Override
     public long countOccurrences(String word) throws IOException {
-        return frequencies.get(word);
+        Optional<Long> count = Optional.ofNullable(frequencies.get(word));
+        return count.orElse(0L);
     }
 }
