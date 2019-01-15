@@ -79,7 +79,7 @@ public class CandidateProcessor {
         try {
             double maxFrequency = 0;
             for(CoreLabel label: restrictToNouns(candidate).getLabels()) {
-                String word = label.lemma();
+                String word = label.lemma().toLowerCase();
                 long localOccurrences = countOccurences(word, doc);
                 long globalOccurrences = referenceCorpus.countOccurrences(word);
                 double ratio = globalWordCount / globalOccurrences;
