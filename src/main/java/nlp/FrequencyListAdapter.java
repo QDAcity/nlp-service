@@ -74,7 +74,7 @@ public class FrequencyListAdapter implements CorpusAdapter {
     @Override
     public long countOccurrences(String word) {
         Optional<Long> count = Optional.ofNullable(frequencies.get(word));
-        logger.info("Word Occurences for " + word + ": " + String.valueOf(count.orElse(0L)));
-        return count.orElse(0L);
+        logger.info("Word Occurences for " + word + ": " + String.valueOf(count.orElse(1L)));
+        return count.orElse(1L);
     }
 }
