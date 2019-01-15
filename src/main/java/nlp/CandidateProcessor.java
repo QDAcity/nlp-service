@@ -77,18 +77,21 @@ public class CandidateProcessor {
         long localWordCount = doc.tokens().size();
 
         try {
-            long maxFrequency = 0;
+            double maxFrequency = 0;
             for(CoreLabel label: restrictToNouns(candidate).getLabels()) {
                 String word = label.lemma();
                 long localOccurrences = countOccurences(word, doc);
                 long globalOccurrences = referenceCorpus.countOccurrences(word);
-                long frequency = localOccurrences * globalWordCount - globalOccurrences * localWordCount;
-                logger.info("Computing word frequency for " + word + ": " + frequency);
-                if(frequency > maxFrequency) {
-                    maxFrequency = frequency;
+                double ratio = globalWordCount / globalOccurrences;
+                double idf = Math.log( ratio );
+                double tf = localOccurrences / (double) localWordCount;
+                double tfidf = tf * idf;
+                logger.info("Computing word frequency for " + word + ": " + tfidf);
+                if(tfidf > maxFrequency) {
+                    maxFrequency = tfidf;
                 }
             }
-            candidate.updateConfidence(maxFrequency);
+//            candidate.updateConfidence(maxFrequency);
         } catch (IOException e) {
             logger.warn(e.toString());
         }
