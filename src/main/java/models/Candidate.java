@@ -11,11 +11,11 @@ public class Candidate {
     private List<CoreLabel> labels;
     private final Tree tree;
 
-    public long getConfidence() {
+    public double getConfidence() {
         return confidence;
     }
 
-    private long confidence = 0;
+    private double confidence = 0;
 
     public Candidate(Tree constituents, List<CoreLabel> labels) {
         this.labels = Collections.unmodifiableList(labels);
@@ -34,7 +34,7 @@ public class Candidate {
         return tree;
     }
 
-    public void updateConfidence(long delta) {
+    public void updateConfidence(double delta) {
         confidence += delta;
     }
 

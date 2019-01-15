@@ -52,7 +52,7 @@ public class RecommendationList {
         return new RecommendationList(text, configFile, corpusFile);
     }
 
-    public RecommendationList confidence(int confVal) {
+    public RecommendationList confidence(double confVal) {
         candidates = processor.filterByRating(candidates, confVal);
         logger.debug("Confidence filtering restricted candidate list to " + candidates.values().size() + ": " + String.valueOf(this.asStringList()));
         return this;
