@@ -91,7 +91,7 @@ public class CandidateProcessor {
                     maxFrequency = tfidf;
                 }
             }
-//            candidate.updateConfidence(maxFrequency);
+            candidate.setFrequencyRating(maxFrequency);
         } catch (IOException e) {
             logger.warn(e.toString());
         }

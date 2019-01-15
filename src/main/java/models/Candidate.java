@@ -11,15 +11,19 @@ public class Candidate {
     private List<CoreLabel> labels;
     private final Tree tree;
 
-    public double getConfidence() {
-        return confidence;
-    }
-
-    private double confidence = 0;
+    private double frequencyRating = 0;
 
     public Candidate(Tree constituents, List<CoreLabel> labels) {
         this.labels = Collections.unmodifiableList(labels);
         this.tree = constituents;
+    }
+
+    /**
+     * Get a rating of this candidates probability of being a glossary keyword.
+     * @return the keyword probability
+     */
+    public double rating() {
+        return frequencyRating;
     }
 
     public Candidate withLabels(List<CoreLabel> labels) {
@@ -32,10 +36,6 @@ public class Candidate {
 
     public Tree getTree() {
         return tree;
-    }
-
-    public void updateConfidence(double delta) {
-        confidence += delta;
     }
 
     @Override
@@ -60,7 +60,7 @@ public class Candidate {
                     .append(label.tag())
                     .append(" ");
         }
-        builder.append("|").append(confidence);
+        builder.append("|").append(rating());
         return builder.toString();
     }
 
@@ -82,5 +82,9 @@ public class Candidate {
         }
         String oText = builder.toString();
         return oText.substring(0, oText.length() - 1); //remove last space
+    }
+
+    public void setFrequencyRating(double frequencyRating) {
+        this.frequencyRating = frequencyRating;
     }
 }
