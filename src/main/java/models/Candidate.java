@@ -19,10 +19,10 @@ public class Candidate {
     }
 
     /**
-     * Get a rating of this candidates probability of being a glossary keyword.
+     * Get a confidence of this candidates probability of being a glossary keyword.
      * @return the keyword probability
      */
-    public double rating() {
+    public double confidence() {
         return frequencyRating;
     }
 
@@ -55,12 +55,10 @@ public class Candidate {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         for (CoreLabel label : labels) {
-            builder.append(label.lemma())
-                    .append("|")
-                    .append(label.tag())
+            builder.append(label.originalText())
                     .append(" ");
         }
-        builder.append("|").append(rating());
+        builder.append("|").append(confidence());
         return builder.toString();
     }
 

@@ -60,7 +60,7 @@ public class BasicNLProcessor implements NLProcessor{
 
     @Override
     public Map<Integer, Candidate> filterByRating(Map<Integer, Candidate> candidates, double confVal) {
-        return restrictTo(candidates, cand -> cand.getConfidence() >= confVal);
+        return restrictTo(candidates, cand -> cand.confidence() >= confVal);
     }
 
     @Override

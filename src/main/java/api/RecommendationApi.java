@@ -32,7 +32,7 @@ public class RecommendationApi {
                 .containingNouns()
                 .shorterThan(4)
                 .evaluateSpecificity()
-//                .confidence(100)
+                .confidence(0.1)
                 .asStringList();
     }
 
