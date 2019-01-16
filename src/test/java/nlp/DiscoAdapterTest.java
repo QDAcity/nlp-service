@@ -3,6 +3,7 @@ package nlp;
 import de.linguatools.disco.CorruptConfigFileException;
 import de.linguatools.disco.DISCO;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -11,6 +12,7 @@ public class DiscoAdapterTest {
     private static DISCO disco;
 
     @Test
+    @Ignore
     public void testEnglishCorpus() throws IOException, CorruptConfigFileException {
         disco = DISCO.load("resources/disco/cc.en.300-COL.denseMatrix");
         int highFreqencyExpected = disco.frequency("people");
@@ -21,6 +23,7 @@ public class DiscoAdapterTest {
     }
 
     @Test
+    @Ignore
     public void testGermanCorpus() throws IOException, CorruptConfigFileException {
         disco = DISCO.load("discoresources/de.denseMatrix");
         int highFrequencyExpected = disco.frequency("mensch");

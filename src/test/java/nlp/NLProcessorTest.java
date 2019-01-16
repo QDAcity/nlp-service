@@ -1,18 +1,13 @@
 package nlp;
 
 
-import api.RecommendationApi;
 import de.linguatools.disco.CorruptConfigFileException;
 import de.linguatools.disco.DISCO;
-import de.linguatools.disco.ReturnDataBN;
 import de.linguatools.disco.WrongWordspaceTypeException;
-import models.ProcessingRequest;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
 
 public class NLProcessorTest {
     private static String TEXT =
@@ -47,6 +42,7 @@ public class NLProcessorTest {
 
 
     @Test
+    @Ignore
     public void test() throws IOException, CorruptConfigFileException, WrongWordspaceTypeException {
         DISCO disco = DISCO.load("discoresources/en.denseMatrix");
         System.out.println(disco.numberOfWords());
