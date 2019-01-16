@@ -4,4 +4,4 @@ target/
 dependency-reduced-pom.xml
 *.jar
 *.log
-resources/disco
+resources/disco/
