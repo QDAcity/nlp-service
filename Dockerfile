@@ -5,6 +5,7 @@ EXPOSE 8080
 
 COPY target/nlp-service-1.0-SNAPSHOT.jar ./nlp.jar
 COPY nlpservice-config.yml .
+RUN mkdir -p ./resources/frequencyLists
 COPY resources/frequencyLists/bnc.frequencies ./resources/frequencyLists/
 COPY english.properties .
 
