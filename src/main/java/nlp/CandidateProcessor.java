@@ -69,7 +69,7 @@ public class CandidateProcessor {
                 .stream()
                 .filter(l -> !l.value().equals("$"))
                 .collect(Collectors.toList());
-        return new Candidate(tree, filteredLabels);
+        return new Candidate(filteredLabels);
     }
 
     protected Candidate evaluateSpecificity(Candidate candidate, CoreDocument doc) {

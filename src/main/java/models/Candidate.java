@@ -1,7 +1,8 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.stanford.nlp.ling.CoreLabel;
-import edu.stanford.nlp.trees.Tree;
 
 import java.util.Collections;
 import java.util.List;
@@ -9,34 +10,32 @@ import java.util.Objects;
 
 public class Candidate {
     private List<CoreLabel> labels;
-    private final Tree tree;
 
     private double frequencyRating = 0;
 
-    public Candidate(Tree constituents, List<CoreLabel> labels) {
+    public Candidate(List<CoreLabel> labels) {
         this.labels = Collections.unmodifiableList(labels);
-        this.tree = constituents;
     }
 
     /**
      * Get a confidence of this candidates probability of being a glossary keyword.
      * @return the keyword probability
      */
+    @JsonProperty
     public double confidence() {
         return frequencyRating;
     }
 
+    @JsonIgnore
     public Candidate withLabels(List<CoreLabel> labels) {
-        return new Candidate(tree, labels);
+        return new Candidate(labels);
     }
 
+    @JsonIgnore
     public List<CoreLabel> getLabels() {
         return labels;
     }
 
-    public Tree getTree() {
-        return tree;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -62,6 +61,7 @@ public class Candidate {
         return builder.toString();
     }
 
+    @JsonProperty
     public String originalText() {
         StringBuilder builder = new StringBuilder();
         for (CoreLabel label : labels) {

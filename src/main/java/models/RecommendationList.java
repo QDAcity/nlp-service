@@ -1,5 +1,6 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.linguatools.disco.CorruptConfigFileException;
 import nlp.NLProcessor;
 import nlp.BasicNLProcessor;
@@ -7,8 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -64,5 +64,10 @@ public class RecommendationList {
                 .stream()
                 .map(Candidate::toString)
                 .collect(Collectors.toList());
+    }
+
+    @JsonProperty(value = "candidates")
+    public List<Candidate> asJsonList() {
+        return new ArrayList<>(candidates.values());
     }
 }

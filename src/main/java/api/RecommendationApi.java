@@ -36,4 +36,18 @@ public class RecommendationApi {
                 .asStringList();
     }
 
+    @POST
+    @Path("/json")
+    public RecommendationList getRecommendations(
+            ProcessingRequest request,
+            @QueryParam("length") @DefaultValue("4") int length,
+            @QueryParam("confidence") @DefaultValue("0.05") float confidence) throws IOException, CorruptConfigFileException {
+        return RecommendationList
+                .create(request.getText(), configFile, corpusFile)
+                .containingNouns()
+                .shorterThan(length)
+                .evaluateSpecificity()
+                .confidence(confidence);
+    }
+
 }
